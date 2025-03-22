@@ -14,9 +14,11 @@ def get_messages(request):
             "id": msg.id,
             "sender_id": msg.sender.id,
             "username": msg.sender.username,
+            "fullname": msg.sender.fullname,
             "group_id": msg.group.id,
             "group_name": msg.group.name,
             "content": msg.content,
+            "profile_pic": msg.sender.profile_pic,
         }
         for msg in messages
     ]
