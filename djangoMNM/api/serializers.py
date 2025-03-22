@@ -10,7 +10,7 @@ from .models import User, Message
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email']
+        fields = ['id', 'username', 'email', 'fullname', 'profile_pic']
         
 class MessageSerializer(serializers.ModelSerializer):
     timestamp = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
