@@ -52,6 +52,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+<<<<<<< Updated upstream
+=======
+    # 'api.middleware.decode_token.DecodeTokenMiddleware',
+>>>>>>> Stashed changes
 ]
 
 ROOT_URLCONF = 'djangoMNM.urls'
@@ -99,9 +103,21 @@ DATABASES = {
 # }
 
 REST_FRAMEWORK = {
+<<<<<<< Updated upstream
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',  # Kiểm tra xem API có bị chặn không
     ]
+=======
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        "rest_framework.authentication.BasicAuthentication",
+        # 'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        "rest_framework.permissions.AllowAny",
+        # 'rest_framework.permissions.IsAuthenticated',
+    ),
+>>>>>>> Stashed changes
 }
 
 
@@ -150,4 +166,14 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 
+<<<<<<< Updated upstream
 CORS_ALLOW_CREDENTIALS = True
+=======
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True
+AUTH_USER_MODEL = "api.User"
+>>>>>>> Stashed changes
