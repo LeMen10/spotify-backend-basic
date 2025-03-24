@@ -8,7 +8,6 @@ from ..serializers import UserSerializer
 from rest_framework import status
 from ..utils.decode_token import decode_token
 
-
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def get_users(request):
@@ -38,7 +37,6 @@ def get_user(request):
     if error_response:
         return error_response
     user = User.objects.get(id=user_id)
-
     return Response(
         {
             "message": "Success",

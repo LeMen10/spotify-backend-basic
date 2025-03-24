@@ -68,7 +68,6 @@ def get_messages_gemini(request):
         }
         for msg in messages
     ]
-
     return JsonResponse({"messages": message_list})
 
 
