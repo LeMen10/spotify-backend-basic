@@ -1,7 +1,7 @@
 from django.urls import path
 from .views.auth_views import register, login
 from .views.user_views import get_users, user_profile, get_user
-from .views.message_views import get_messages
+from .views.message_views import get_messages_general_chat, get_messages_gemini, save_message_gemini
 
 urlpatterns = [
     # auth
@@ -14,5 +14,7 @@ urlpatterns = [
     path('user/user-profile', user_profile, name='user-profile'),
 
     # messages
-    path('message/get-messages', get_messages, name='message-list'),
+    path('message/get-messages-general-chat', get_messages_general_chat, name='message-list'),
+    path('message/get-messages-gemini', get_messages_gemini, name='message-list-AI'),
+    path('message/save-messages-gemini', save_message_gemini, name='save-message-AI'),
 ]

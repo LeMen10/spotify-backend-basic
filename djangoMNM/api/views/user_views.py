@@ -6,8 +6,7 @@ from django.http import HttpResponse
 from ..models import User
 from ..serializers import UserSerializer
 from rest_framework import status
-from ..middleware.decode_token import DecodeTokenMiddleware
-
+from ..utils.decode_token import decode_token
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
@@ -18,12 +17,11 @@ def get_users(request):
 
 
 @api_view(["GET"])
-@DecodeTokenMiddleware
 @permission_classes([IsAuthenticated])
 def user_profile(request):
-    print("request:", request.user_id)
-    if not request.user.is_authenticated:
-        return HttpResponse("No login!")
+    user_id, error_response = decode_token(request)
+    if error_response:
+        return error_response
     return Response(
         {
             "message": "Success",
@@ -34,22 +32,18 @@ def user_profile(request):
 
 
 @api_view(["GET"])
-@DecodeTokenMiddleware
-@permission_classes([IsAuthenticated])
 def get_user(request):
-    print("request:", request.user.__dict__)
-    user = request.user.__dict__
-    if not request.user.is_authenticated:
-        return HttpResponse("No login!")
+    user_id, error_response = decode_token(request)
+    if error_response:
+        return error_response
+    user = User.objects.get(id=user_id)
     return Response(
         {
             "message": "Success",
             "user": {
-                "id": user.get("id"),
-                "username": user.get("username"),
-                "profile_pic": (
-                    str(user.get("profile_pic")) if user.get("profile_pic") else None
-                ),
+                "id": user.id,
+                "username": user.username,
+                "profile_pic": str(user.profile_pic) if user.profile_pic else None,
             },
         },
         status=status.HTTP_200_OK,
