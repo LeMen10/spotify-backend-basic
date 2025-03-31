@@ -1,6 +1,7 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework import status
 from django.http import JsonResponse
 from ..models import Message, ConversationParticipant, User, Conversation
 from ..serializers import MessageSerializer
@@ -77,8 +78,6 @@ def save_message_gemini(request):
     if error_response:
         return error_response
     user = User.objects.get(id=user_id)
-    print(f"hi {user}")
-    print(f"Raw body: {request.body}")
 
     try:
         data = json.loads(request.body.decode("utf-8"))
@@ -112,3 +111,40 @@ def save_message_gemini(request):
         )
 
     return JsonResponse({"message": "Messages saved successfully"}, status=201)
+
+@api_view(["POST"])
+def save_message_general(request):
+    # sender_id = request.data.get("sender_id")
+    # conversation_id = request.data.get("conversation_id")
+    # content = request.data.get("content")
+
+    try:
+        sender = request.data.get("sender_id")
+        conversation_id = request.data.get('conversation_id')
+        content = request.data.get('message')
+        
+        if not all([sender, conversation_id, content]):
+            return Response({'error': 'Missing required fields'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        conversation = Conversation.objects.get(id=conversation_id)
+        
+        message = Message.objects.create(
+            sender=sender,
+            conversation=conversation,
+            content=content
+        )
+        
+        return Response({
+            'message': {
+                'id': message.id,
+                'content': message.content,
+                'sender_id': message.sender.id,
+                'sender_name': message.sender.username,
+                'timestamp': message.timestamp.isoformat()
+            }
+        }, status=status.HTTP_201_CREATED)
+        
+    except Conversation.DoesNotExist:
+        return Response({'error': 'Conversation not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

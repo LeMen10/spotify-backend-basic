@@ -3,10 +3,10 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import AccessToken
-from datetime import datetime, timedelta, timezone
 from django.contrib.auth.hashers import check_password, make_password
-from ..models import User
+from ..models import User, Conversation, ConversationParticipant
 from api.utils.generate_token import generate_jwt_token
+from django.shortcuts import get_object_or_404
 
 
 @api_view(["POST"])
@@ -46,7 +46,6 @@ def login(request):
         {"error": "Invalid username or password"}, status=status.HTTP_401_UNAUTHORIZED
     )
 
-
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def register(request):
@@ -55,8 +54,9 @@ def register(request):
     email = request.data.get("email")
     fullname = request.data.get("fullname")
     profile_pic = request.data.get("profile_pic")
+    print(username, password, email, fullname, profile_pic)
 
-    if not username or not password or not email or not fullname:
+    if not username or not password or not email or not fullname or not profile_pic:
         return Response({"error": "missing data"}, status=status.HTTP_400_BAD_REQUEST)
 
     if User.objects.filter(username=username).exists():
@@ -64,12 +64,20 @@ def register(request):
             {"error": "username already exists"}, status=status.HTTP_400_BAD_REQUEST
         )
 
-    User.objects.create(
+    create_user = User.objects.create(
         username=username,
         email=email,
         password=make_password(password),
         fullname=fullname,
         profile_pic=profile_pic,
     )
+
+    conversation, _ = Conversation.objects.get_or_create(name="General")
+
+    ConversationParticipant.objects.get_or_create(
+        conversation=conversation,
+        user=create_user
+    )
+
 
     return Response({"message": "Success"}, status=status.HTTP_201_CREATED)
