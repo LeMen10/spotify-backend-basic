@@ -15,10 +15,11 @@ class Genre(models.Model):
 class Song(models.Model):
     title = models.CharField(max_length=255)
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
-    duration = models.PositiveIntegerField()
+    duration = models.IntegerField()
     release_date = models.DateField(null=True, blank=True)
     genre = models.ForeignKey(Genre, null=True, blank=True, on_delete=models.SET_NULL)
     play_count = models.PositiveIntegerField(default=0)
+    audio_file = models.FileField(upload_to='songs/', default='default.mp3')
 
     class Meta:
         db_table = "songs"
