@@ -23,7 +23,6 @@ source my_env/bin/activate
 Cài đặt các thư viện cần thiết:
 ```sh
 pip install -r requirements.txt
-cd djangoMNM
 ```
 
 ### 2. **Cài đặt PostgreSQL**
@@ -54,6 +53,7 @@ Khi đã kích hoạt môi trường ảo và ở thư mục `djangoMNM`, chạy
 
 Thiết lập biến môi trường `PYTHONPATH` (thay đổi đường dẫn nếu cần):
 ```sh
+cd djangoMNM
 export PYTHONPATH=/mnt/f/diskD/Workspace/spotify-backend-basic:$PYTHONPATH
 ```
 
