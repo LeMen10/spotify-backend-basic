@@ -22,8 +22,8 @@ source my_env/bin/activate
 
 Cài đặt các thư viện cần thiết:
 ```sh
-cd djangoMNM
 pip install -r requirements.txt
+cd djangoMNM
 ```
 
 ### 2. **Cài đặt PostgreSQL**

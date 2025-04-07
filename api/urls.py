@@ -8,6 +8,9 @@ from .views.message_views import (
     save_message_general,
 )
 from .views.conversation_views import get_conversation
+from .views.song_views import get_songs, add_song
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     # auth
@@ -29,4 +32,11 @@ urlpatterns = [
 
     #conversation
     path("conversation/get-conversation", get_conversation, name="get-conversation"),
+
+    #song
+    path('songs/get-songs', get_songs, name='song-list'),
+    path('songs/add', add_song, name='add-song'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
