@@ -116,3 +116,80 @@ def get_playlist_detail(request, playlist_id):
 
     serializer = PlaylistSerializer(playlist, context={"request": request})
     return Response(serializer.data, status=status.HTTP_200_OK)
+# nam
+@api_view(["DELETE"])
+@permission_classes([AllowAny])
+def delete_playlist(request, playlist_id):
+    # user_id, error_response = decode_token(request)
+    # if error_response:
+    #     return error_response
+    try:
+        playlist = Playlist.objects.get(pk=playlist_id)
+        playlist.delete()
+        return Response(
+            {"message": "Playlist deleted successfully"}, status=status.HTTP_200_OK
+        )
+    except Playlist.DoesNotExist:
+        return Response(
+            {"error": "Playlist not found"}, status=status.HTTP_404_NOT_FOUND
+        )
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["POST"])
+def add_song_to_playlist(request):
+    playlist_id = request.data.get("playlist_id")
+    song_id = request.data.get("song_id")
+
+    if not playlist_id or not song_id:
+        return Response(
+            {"error": "Playlist ID and Song ID are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    try:
+        playlist = Playlist.objects.get(id=playlist_id)
+        song = Song.objects.get(id=song_id)
+    except Playlist.DoesNotExist:
+        return Response(
+            {"error": "Playlist not found."}, status=status.HTTP_404_NOT_FOUND
+        )
+    except Song.DoesNotExist:
+        return Response({"error": "Song not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    # Check if the song is already in the playlist
+    if PlaylistSong.objects.filter(playlist=playlist, song=song).exists():
+        return Response(
+            {"message": "Song is already in the playlist."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    PlaylistSong.objects.create(playlist=playlist, song=song)
+
+    return Response(
+        {"message": "successfully"},
+        status=status.HTTP_201_CREATED,
+    )
+
+
+@api_view(["GET"])
+def get_song_of_playlist(request, playlist_id):
+    try:
+        # Lấy tất cả bài hát in playlist với playlist_id
+        playlist_songs = PlaylistSong.objects.filter(playlist_id=playlist_id)
+
+        # Lấy danh sách bài hát từ PlaylistSong
+        songs = [playlist_song.song for playlist_song in playlist_songs]
+
+        # Serialize danh sách bài hát
+        serializer = SongSerializer(songs, many=True, context={"request": request})
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except PlaylistSong.DoesNotExist:
+        return Response(
+            {"error": "Playlist not found or no songs in playlist."},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
