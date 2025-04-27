@@ -64,6 +64,7 @@ class SongSerializer(serializers.ModelSerializer):
             "genre_info",
             "artist_id",
             "genre_id",
+            "image"
         ]
 
     def get_audio_url(self, obj):

@@ -30,8 +30,9 @@ def add_song(request):
         artist_id = request.data.get("artist_id")
         genre_id = request.data.get("genre_id")
         audio_file = request.FILES.get("audio_file")  # Lấy file từ request
+        image = request.FILES.get(image)
 
-        if not all([title, duration, release_date, artist_id, genre_id, audio_file]):
+        if not all([title, duration, release_date, artist_id, genre_id, audio_file, image]):
             return Response({"error": "Missing fields"}, status=400)
 
         song = Song.objects.create(
@@ -40,7 +41,8 @@ def add_song(request):
             release_date=release_date,
             artist_id=artist_id,
             genre_id=genre_id,
-            audio_file=audio_file
+            audio_file=audio_file,
+            image=image,
         )
 
         return Response(SongSerializer(song).data, status=201)

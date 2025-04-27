@@ -8,7 +8,7 @@ from .views.message_views import (
     save_message_general,
 )
 from .views.conversation_views import get_conversation
-from .views.song_views import get_songs
+from .views.song_views import get_songs, search_songs
 from django.conf import settings
 from django.conf.urls.static import static
 from .views.admin.music_management_view import (

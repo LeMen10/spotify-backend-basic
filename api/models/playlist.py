@@ -5,6 +5,10 @@ from .music import Song
 class Playlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    image = models.ImageField(
+        upload_to="playlist_images/", blank=True, null=True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

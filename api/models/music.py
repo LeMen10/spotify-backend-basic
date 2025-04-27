@@ -20,6 +20,7 @@ class Song(models.Model):
     genre = models.ForeignKey(Genre, null=True, blank=True, on_delete=models.SET_NULL)
     play_count = models.PositiveIntegerField(default=0)
     audio_file = models.FileField(upload_to='songs/', default='default.mp3')
+    image = models.ImageField(upload_to='song_images/', null=True, blank=True)
 
     class Meta:
         db_table = "songs"
