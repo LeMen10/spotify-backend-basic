@@ -35,7 +35,12 @@ from .views.admin.user_management_view import (
     update_user,
     delete_user,
 )
-
+from .views.playlist_views import (
+    get_playlists,
+    add_playlist,
+    update_playlist,
+    get_playlist_detail,
+)
 urlpatterns = [
     # auth
     path("auth/login", login, name="user-login"),
@@ -82,4 +87,17 @@ urlpatterns = [
     path("admin/add-user", add_user, name="add-user"),
     path("admin/update-user/<int:user_id>", update_user, name="update-user"),
     path("admin/delete-user/<int:user_id>", delete_user, name="delete-user"),
+    # playlists
+    path("playlists/get-playlists", get_playlists, name="playlist-list"),
+    path("playlists/add-playlist", add_playlist, name="add-playlist"),
+    path(
+        "playlists/update-playlist/<int:playlist_id>",
+        update_playlist,
+        name="update-playlist",
+    ),
+    path(
+        "playlists/get-playlist/<int:playlist_id>/",
+        get_playlist_detail,
+        name="playlist-detail",
+    ),
 ]

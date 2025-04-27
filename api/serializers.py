@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Message, Conversation, Song, Artist, Genre
+from .models import User, Message, Conversation, Song, Artist, Genre, Playlist
 from django.conf import settings
 from urllib.parse import unquote
 
@@ -95,3 +95,13 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = ("id", "name")
+
+class PlaylistSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(slug_field='username', queryset=User.objects.all())
+    fullname = serializers.SerializerMethodField()
+    class Meta:
+        model = Playlist
+        fields = ["id", "user", "fullname", "name", "created_at", "description", "image"]
+        read_only_fields = ["id", "created_at"]
+    def get_fullname(self, obj):
+        return obj.user.fullname if obj.user else None
