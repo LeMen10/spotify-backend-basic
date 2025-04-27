@@ -40,6 +40,9 @@ from .views.playlist_views import (
     add_playlist,
     update_playlist,
     get_playlist_detail,
+    delete_playlist,
+    add_song_to_playlist,
+    get_song_of_playlist,
 )
 urlpatterns = [
     # auth
@@ -67,6 +70,7 @@ urlpatterns = [
     # song
     path("songs/get-songs", get_songs, name="song-list"),
     path("songs/add", add_song, name="add-song"),
+    path("songs/search", search_songs, name="search-songs"),
     # admin song
     path("admin/get-songs", get_songs_management, name="song-list"),
     path("admin/add-song", add_song, name="add-song"),
@@ -100,4 +104,12 @@ urlpatterns = [
         get_playlist_detail,
         name="playlist-detail",
     ),
+    path(
+        "playlists/delete-playlist/<int:playlist_id>",
+        delete_playlist,
+        name="delete-playlist",
+    ),
+    path('playlist/add-song/', add_song_to_playlist, name='add_song_to_playlist'),
+    path('playlist/get-songs/<int:playlist_id>', get_song_of_playlist, name='get_song_of_playlist'),
+    
 ]

@@ -5,6 +5,12 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from ..utils.decode_token import decode_token
+from rest_framework import status
+from django.db.models import Q, Func, Value
+
+class Unaccent(Func):
+    function = "unaccent"
+    arity = 1
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -40,3 +46,26 @@ def add_song(request):
         return Response(SongSerializer(song).data, status=201)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
+    
+@api_view(["GET"])
+def search_songs(request):
+    try:
+        query = request.GET.get("query", "").strip()
+        if not query:
+            return Response(
+                {"error": "Query parameter is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        songs = Song.objects.annotate(
+            unaccented_title=Unaccent("title"),
+            unaccented_artist=Unaccent("artist__name"),
+        ).filter(
+            Q(unaccented_title__icontains=query) | Q(unaccented_artist__icontains=query)
+        )
+
+        serializer = SongSerializer(songs, many=True, context={"request": request})
+
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
