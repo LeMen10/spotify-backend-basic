@@ -1,0 +1,11 @@
+{
+  "name": "spotify-backend-basic",
+  "version": "1.0.0",
+  "description": "Dự án này là backend cơ bản cho Spotify, được xây dựng bằng Django và hỗ trợ WebSocket với Daphne.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
