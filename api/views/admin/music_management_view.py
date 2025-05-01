@@ -19,7 +19,7 @@ def get_songs_management(request):
         limit = int(request.GET.get("limit", 10))
 
         offset = (page - 1) * limit
-        all_songs = Song.objects.all().select_related("artist", "genre").order_by("-id")
+        all_songs = Song.objects.all().select_related("artist", "genre").order_by("id")
         total_count = all_songs.count()
         page_count = ceil(total_count / limit)
 
@@ -42,8 +42,8 @@ def get_songs_management(request):
 @permission_classes([AllowAny])
 @parser_classes([MultiPartParser, FormParser])  # Hỗ trợ upload file
 def add_song(request):
-    user_id, error_response = decode_token(request)
-    if error_response: return error_response
+    # user_id, error_response = decode_token(request)
+    # if error_response: return error_response
     try:
         title = request.data.get("title")
         duration = request.data.get("duration")
@@ -51,9 +51,10 @@ def add_song(request):
         artist_id = request.data.get("artist_id")
         genre_id = request.data.get("genre_id")
         audio_file = request.FILES.get("audio_file")
-        print(title, duration, release_date, artist_id, genre_id, audio_file)
+        image_file = request.FILES.get("image_file") 
+        print(title, duration, release_date, artist_id, genre_id, audio_file, image_file)
 
-        if not all([title, duration, release_date, artist_id, genre_id, audio_file]):
+        if not all([title, duration, release_date, artist_id, genre_id, audio_file, image_file]):
             return Response({"error": "Missing fields"}, status=400)
 
         song = Song.objects.create(
@@ -63,6 +64,7 @@ def add_song(request):
             artist_id=artist_id,
             genre_id=genre_id,
             audio_file=audio_file,
+            image=image_file,
         )
 
         return Response(SongSerializer(song).data, status=201)

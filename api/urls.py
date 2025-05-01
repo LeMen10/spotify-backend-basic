@@ -8,7 +8,7 @@ from .views.message_views import (
     save_message_general,
 )
 from .views.conversation_views import get_conversation
-from .views.song_views import get_songs, search_songs
+from .views.song_views import get_songs, search_songs, increase_play_count
 from django.conf import settings
 from django.conf.urls.static import static
 from .views.admin.music_management_view import (
@@ -19,12 +19,14 @@ from .views.admin.music_management_view import (
 )
 from .views.admin.artist_management_view import (
     get_artists,
+    get_artists_by_limit,
     add_artist,
     update_artist,
     delete_artist,
 )
 from .views.admin.genres_management_view import (
     get_genres,
+    get_genres_by_limit,
     add_genre,
     update_genre,
     delete_genre,
@@ -77,17 +79,26 @@ urlpatterns = [
     path("songs/get-songs", get_songs, name="song-list"),
     path("songs/add", add_song, name="add-song"),
     path("songs/search", search_songs, name="search-songs"),
+    path(
+        "songs/<int:song_id>/increase-play-count",
+        increase_play_count,
+        name="increase-play-count",
+    ),
     # admin song
     path("admin/get-songs", get_songs_management, name="song-list"),
     path("admin/add-song", add_song, name="add-song"),
     path("admin/update-song/<int:song_id>/", update_song, name="update-song"),
     path("admin/delete-song/<int:song_id>", delete_song, name="delete-song"),
     # admin artist
+    path(
+        "admin/get-artists-by-limit", get_artists_by_limit, name="artist-list-by-limit"
+    ),
     path("admin/get-artists", get_artists, name="artist-list"),
     path("admin/add-artist", add_artist, name="add_artist"),
     path("admin/update-artist/<int:id>", update_artist, name="update_artist"),
     path("admin/delete-artist/<int:id>", delete_artist, name="delete_artist"),
     # admin genres
+    path("admin/get-genres-by-limit", get_genres_by_limit, name="genre-list"),
     path("admin/get-genres", get_genres, name="genre-list"),
     path("admin/add-genre", add_genre, name="add_genre"),
     path("admin/update-genre/<int:id>", update_genre, name="update_genre"),
@@ -115,8 +126,12 @@ urlpatterns = [
         delete_playlist,
         name="delete-playlist",
     ),
-    path('playlist/add-song/', add_song_to_playlist, name='add_song_to_playlist'),
-    path('playlist/get-songs/<int:playlist_id>', get_song_of_playlist, name='get_song_of_playlist'),
+    path("playlist/add-song/", add_song_to_playlist, name="add_song_to_playlist"),
+    path(
+        "playlist/get-songs/<int:playlist_id>",
+        get_song_of_playlist,
+        name="get_song_of_playlist",
+    ),
     path(
         "playlist/remove-song/",
         remove_song_from_playlist,
@@ -126,5 +141,4 @@ urlpatterns = [
     path("admin/system-stats/", get_system_stats, name="system-stats"),
     path("admin/songs/top-popular/", top_popular_songs_char, name="top-popular-songs"),
     path("admin/songs/top/", top_songs, name="top-songs"),
-    
 ]

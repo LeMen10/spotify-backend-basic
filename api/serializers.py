@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
             "fullname",
             "profile_pic",
             "is_active",
-            "is_staff",
+            "role",
         ]
 
     def update(self, instance, validated_data):
@@ -43,6 +43,11 @@ class SongSerializer(serializers.ModelSerializer):
     audio_url = serializers.SerializerMethodField()
     artist_info = serializers.SerializerMethodField()
     genre_info = serializers.SerializerMethodField()
+    image = serializers.ImageField(
+        required=False,
+        allow_null=True,
+        write_only=False  # Cho phép cả đọc và ghi
+    )
     # Ánh xạ artist_id và genre_id
     artist_id = serializers.PrimaryKeyRelatedField(
         queryset=Artist.objects.all(), source="artist"
@@ -79,6 +84,15 @@ class SongSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(decoded_url)
         return f"{settings.BASE_URL}{decoded_url}"
 
+    def to_representation(self, instance):
+        """Override để trả về URL đầy đủ khi hiển thị"""
+        ret = super().to_representation(instance)
+        if instance.image:
+            request = self.context.get('request')
+            url = instance.image.url
+            ret['image'] = request.build_absolute_uri(url) if request else f"{settings.BASE_URL}{url}"
+        return ret
+    
     def get_artist_info(self, obj):
         return {"id": obj.artist.id, "name": obj.artist.name}
 

@@ -21,22 +21,11 @@ def get_genres(request):
     user_id, error_response = decode_token(request)
     if error_response: return error_response
     try:
-        page = int(request.GET.get("page", 1))
-        limit = int(request.GET.get("limit", 6))
-
-        offset = (page - 1) * limit
         all_genres = Genre.objects.all().order_by("id")
-        total_count = all_genres.count()
-        page_count = ceil(total_count / limit)
-
-        # Lấy dữ pagination
-        genres = all_genres[offset : offset + limit]
-
-        # Serialize
-        serializer = GenreSerializer(genres, many=True, context={"request": request})
+        serializer = GenreSerializer(all_genres, many=True, context={"request": request})
 
         return Response(
-            {"data": serializer.data, "count": total_count, "page_count": page_count},
+            {"data": serializer.data},
             status=status.HTTP_200_OK,
         )
     except Exception as e:
@@ -106,3 +95,30 @@ def delete_genre(request, id):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
     return JsonResponse({"error": "Phương thức không được hỗ trợ"}, status=405)
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_genres_by_limit(request):
+    user_id, error_response = decode_token(request)
+    if error_response: return error_response
+    try:
+        page = int(request.GET.get("page", 1))
+        limit = int(request.GET.get("limit", 6))
+
+        offset = (page - 1) * limit
+        all_genres = Genre.objects.all().order_by("id")
+        total_count = all_genres.count()
+        page_count = ceil(total_count / limit)
+
+        # Lấy dữ pagination
+        genres = all_genres[offset : offset + limit]
+
+        # Serialize
+        serializer = GenreSerializer(genres, many=True, context={"request": request})
+
+        return Response(
+            {"data": serializer.data, "count": total_count, "page_count": page_count},
+            status=status.HTTP_200_OK,
+        )
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

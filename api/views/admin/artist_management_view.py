@@ -17,7 +17,7 @@ from django.db import IntegrityError
 # API get artists
 @api_view(["GET"])
 @permission_classes([AllowAny])
-def get_artists(request):
+def get_artists_by_limit(request):
     user_id, error_response = decode_token(request)
     if error_response: return error_response
     try:
@@ -53,15 +53,15 @@ def add_artist(request):
             name = data.get("name")
             if not name:
                 return JsonResponse(
-                    {"error": "Tên nghệ sĩ không được để trống"}, status=400
+                    {"error": "Artist name cannot be left blank"}, status=400
                 )
             artist = Artist.objects.create(name=name)
             return JsonResponse({"id": artist.id, "name": artist.name}, status=201)
         except IntegrityError:
-            return JsonResponse({"error": "Nghệ sĩ đã tồn tại"}, status=400)
+            return JsonResponse({"error": "The artist has existed"}, status=400)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
-    return JsonResponse({"error": "Phương thức không được hỗ trợ"}, status=405)
+    return JsonResponse({"error": "Method not supported"}, status=405)
 
 
 @api_view(["PUT"])
@@ -76,14 +76,14 @@ def update_artist(request, id):
             name = data.get("name")
             if not name:
                 return JsonResponse(
-                    {"error": "Tên nghệ sĩ không được để trống"}, status=400
+                    {"error": "Artist name cannot be left blank"}, status=400
                 )
             artist.name = name
             artist.save()
             return JsonResponse({"id": artist.id, "name": artist.name}, status=200)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
-    return JsonResponse({"error": "Phương thức không được hỗ trợ"}, status=405)
+    return JsonResponse({"error": "Method not supported"}, status=405)
 
 
 @api_view(["DELETE"])
@@ -101,9 +101,24 @@ def delete_artist(request, id):
             # Xóa nghệ sĩ
             artist.delete()
             return JsonResponse(
-                {"message": "Xóa nghệ sĩ và các bài hát liên quan thành công"},
+                {"message": "Delete artist and related songs successfully"},
                 status=200,
             )
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
-    return JsonResponse({"error": "Phương thức không được hỗ trợ"}, status=405)
+    return JsonResponse({"error": "Method not supported"}, status=405)
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_artists(request):
+    user_id, error_response = decode_token(request)
+    if error_response: return error_response
+    try:
+        all_artists = Artist.objects.all().order_by("id")
+        serializer = ArtistSerializer(all_artists, many=True, context={"request": request})
+        return Response(
+            {"data": serializer.data},
+            status=status.HTTP_200_OK,
+        )
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
