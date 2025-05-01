@@ -44,6 +44,11 @@ from .views.playlist_views import (
     add_song_to_playlist,
     get_song_of_playlist,
 )
+from .views.admin.dashboard_management_view import (
+    get_system_stats,
+    top_popular_songs_char,
+    top_songs,
+)
 urlpatterns = [
     # auth
     path("auth/login", login, name="user-login"),
@@ -111,5 +116,9 @@ urlpatterns = [
     ),
     path('playlist/add-song/', add_song_to_playlist, name='add_song_to_playlist'),
     path('playlist/get-songs/<int:playlist_id>', get_song_of_playlist, name='get_song_of_playlist'),
-    
+    # admin dashboard
+    path("admin/system-stats/", get_system_stats, name="system-stats"),
+    path("admin/songs/top-popular/", top_popular_songs_char, name="top-popular-songs"),
+    path("admin/songs/top/", top_songs, name="top-songs"),
+
 ]
