@@ -193,3 +193,44 @@ def get_song_of_playlist(request, playlist_id):
         )
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(["DELETE"])
+def remove_song_from_playlist(request):
+    # user_id, error_response = decode_token(request)
+    # if error_response:
+    #     return error_response
+
+    playlist_id = request.data.get("playlist_id")
+    song_id = request.data.get("song_id")
+
+    if not playlist_id or not song_id:
+        return Response(
+            {"error": "Playlist ID and Song ID are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    try:
+        playlist = Playlist.objects.get(id=playlist_id)
+        song = Song.objects.get(id=song_id)
+    except Playlist.DoesNotExist:
+        return Response(
+            {"error": "Playlist not found."}, status=status.HTTP_404_NOT_FOUND
+        )
+    except Song.DoesNotExist:
+        return Response({"error": "Song not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    # Kiểm tra xem bài hát có trong playlist không
+    try:
+        playlist_song = PlaylistSong.objects.get(playlist=playlist, song=song)
+        playlist_song.delete()
+        return Response(
+            {"message": "Song removed from playlist successfully."},
+            status=status.HTTP_200_OK,
+        )
+    except PlaylistSong.DoesNotExist:
+        return Response(
+            {"error": "Song is not in the playlist."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
