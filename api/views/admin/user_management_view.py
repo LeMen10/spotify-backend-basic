@@ -40,40 +40,30 @@ def get_users(request):
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
-@parser_classes([MultiPartParser, FormParser])
 def add_user(request):
     user_id, error_response = decode_token(request)
-    if error_response:
-        return error_response
+    if error_response: return error_response
     try:
         username = request.data.get("username")
         email = request.data.get("email")
         password = request.data.get("password")
         fullname = request.data.get("fullname")
-        profile_pic = request.FILES.get("profile_pic")
-        is_staff = request.data.get("is_staff", False)
-        is_active = request.data.get("is_active", True)
+        profile_pic = request.data.get("profile_pic")
 
-        if not all([username, email, password, fullname]):
+        if not all([username, email, password, fullname, profile_pic]):
             return Response(
                 {"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Tạo người dùng mới
         user = User.objects.create_user(
             username=username,
             email=email,
             password=password,
             fullname=fullname,
-            is_staff=is_staff,
-            is_active=is_active,
+            profile_pic=profile_pic,
         )
 
-        # Lưu profile_pic nếu có
-        if profile_pic:
-            user.profile_pic = profile_pic
-            user.save()
-
+        user.save()
         serializer = UserSerializer(user, context={"request": request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     except Exception as e:
@@ -82,18 +72,15 @@ def add_user(request):
 
 @api_view(["PUT"])
 @permission_classes([AllowAny])
-@parser_classes([MultiPartParser, FormParser])
 def update_user(request, user_id):
     user_id_from_token, error_response = decode_token(request)
-    if error_response:
-        return error_response
+    if error_response: return error_response
     try:
         user = User.objects.get(pk=user_id)
     except User.DoesNotExist:
         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
     try:
-        # Cập nhật các trường
         serializer = UserSerializer(
             user, data=request.data, partial=True, context={"request": request}
         )
@@ -113,8 +100,7 @@ def update_user(request, user_id):
 @permission_classes([AllowAny])
 def delete_user(request, user_id):
     user_id_from_token, error_response = decode_token(request)
-    if error_response:
-        return error_response
+    if error_response: return error_response
     try:
         user = User.objects.get(pk=user_id)
         user.delete()
