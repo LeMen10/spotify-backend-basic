@@ -46,6 +46,7 @@ from .views.playlist_views import (
     add_song_to_playlist,
     get_song_of_playlist,
     remove_song_from_playlist,
+    get_playlist_by_limit,
 )
 from .views.admin.dashboard_management_view import (
     get_system_stats,
@@ -110,6 +111,7 @@ urlpatterns = [
     path("admin/delete-user/<int:user_id>", delete_user, name="delete-user"),
     # playlists
     path("playlists/get-playlists", get_playlists, name="playlist-list"),
+    path("playlists/get-playlist-by-limit", get_playlist_by_limit, name="playlist-list"),
     path("playlists/add-playlist", add_playlist, name="add-playlist"),
     path(
         "playlists/update-playlist/<int:playlist_id>",
