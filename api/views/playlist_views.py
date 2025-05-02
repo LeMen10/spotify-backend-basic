@@ -13,7 +13,7 @@ User = get_user_model()
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
-def get_playlists(request):
+def get_playlist_by_limit(request):
     # user_id, error_response = decode_token(request)
     # if error_response:
     #     return error_response
@@ -105,6 +105,7 @@ def update_playlist(request, playlist_id):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(["GET"])
 def get_playlist_detail(request, playlist_id):
     try:
@@ -116,6 +117,8 @@ def get_playlist_detail(request, playlist_id):
 
     serializer = PlaylistSerializer(playlist, context={"request": request})
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 # nam
 @api_view(["DELETE"])
 @permission_classes([AllowAny])
@@ -194,6 +197,7 @@ def get_song_of_playlist(request, playlist_id):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(["DELETE"])
 def remove_song_from_playlist(request):
     # user_id, error_response = decode_token(request)
@@ -232,5 +236,23 @@ def remove_song_from_playlist(request):
             {"error": "Song is not in the playlist."},
             status=status.HTTP_400_BAD_REQUEST,
         )
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_playlists(request):
+    user_id, error_response = decode_token(request)
+    if error_response: return error_response
+    try:
+        all_playlists = (
+            Playlist.objects.all().select_related("user").order_by("-created_at")
+        )
+        # Serialize
+        serializer = PlaylistSerializer(
+            all_playlists, many=True, context={"request": request}
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
