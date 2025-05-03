@@ -11,11 +11,9 @@ from math import ceil
 User = get_user_model()
 
 @api_view(["GET"])
-@permission_classes([AllowAny])
 def get_users(request):
     user_id, error_response = decode_token(request)
-    if error_response:
-        return error_response
+    if error_response: return error_response
     try:
         page = int(request.GET.get("page", 1))
         limit = int(request.GET.get("limit", 10))
@@ -39,7 +37,6 @@ def get_users(request):
 
 
 @api_view(["POST"])
-@permission_classes([AllowAny])
 def add_user(request):
     user_id, error_response = decode_token(request)
     if error_response: return error_response
@@ -71,9 +68,8 @@ def add_user(request):
 
 
 @api_view(["PUT"])
-@permission_classes([AllowAny])
 def update_user(request, user_id):
-    user_id_from_token, error_response = decode_token(request)
+    user_id, error_response = decode_token(request)
     if error_response: return error_response
     try:
         user = User.objects.get(pk=user_id)
@@ -97,9 +93,8 @@ def update_user(request, user_id):
 
 
 @api_view(["DELETE"])
-@permission_classes([AllowAny])
 def delete_user(request, user_id):
-    user_id_from_token, error_response = decode_token(request)
+    user_id, error_response = decode_token(request)
     if error_response: return error_response
     try:
         user = User.objects.get(pk=user_id)

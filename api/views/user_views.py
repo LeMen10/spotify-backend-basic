@@ -34,8 +34,7 @@ def user_profile(request):
 @api_view(["GET"])
 def get_user(request):
     user_id, error_response = decode_token(request)
-    if error_response:
-        return error_response
+    if error_response: return error_response
     user = User.objects.get(id=user_id)
     return Response(
         {

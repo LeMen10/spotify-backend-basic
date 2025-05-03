@@ -12,11 +12,9 @@ User = get_user_model()
 
 
 @api_view(["GET"])
-@permission_classes([AllowAny])
 def get_playlist_by_limit(request):
-    # user_id, error_response = decode_token(request)
-    # if error_response:
-    #     return error_response
+    user_id, error_response = decode_token(request)
+    if error_response: return error_response
     try:
         page = int(request.GET.get("page", 1))
         limit = int(request.GET.get("limit", 10))
@@ -45,7 +43,6 @@ def get_playlist_by_limit(request):
 
 
 @api_view(["POST"])
-@permission_classes([AllowAny])
 def add_playlist(request):
     user_id, error_response = decode_token(request)
     if error_response:
@@ -80,13 +77,9 @@ def add_playlist(request):
 
 
 @api_view(["PUT"])
-@permission_classes([AllowAny])
 def update_playlist(request, playlist_id):
-    # user_id, error_response = decode_token(request)
-    # if error_response:
-    #     return error_response
-    print(playlist_id)
-    print(request)
+    user_id, error_response = decode_token(request)
+    if error_response: return error_response
     try:
         playlist = Playlist.objects.get(pk=playlist_id)
     except Playlist.DoesNotExist:
@@ -108,6 +101,8 @@ def update_playlist(request, playlist_id):
 
 @api_view(["GET"])
 def get_playlist_detail(request, playlist_id):
+    user_id, error_response = decode_token(request)
+    if error_response: return error_response
     try:
         playlist = Playlist.objects.get(id=playlist_id)
     except Playlist.DoesNotExist:
@@ -121,11 +116,10 @@ def get_playlist_detail(request, playlist_id):
 
 # nam
 @api_view(["DELETE"])
-@permission_classes([AllowAny])
+# @permission_classes([AllowAny])
 def delete_playlist(request, playlist_id):
-    # user_id, error_response = decode_token(request)
-    # if error_response:
-    #     return error_response
+    user_id, error_response = decode_token(request)
+    if error_response: return error_response
     try:
         playlist = Playlist.objects.get(pk=playlist_id)
         playlist.delete()
@@ -142,6 +136,9 @@ def delete_playlist(request, playlist_id):
 
 @api_view(["POST"])
 def add_song_to_playlist(request):
+    user_id, error_response = decode_token(request)
+    if error_response:
+        return error_response
     playlist_id = request.data.get("playlist_id")
     song_id = request.data.get("song_id")
 
@@ -178,6 +175,9 @@ def add_song_to_playlist(request):
 
 @api_view(["GET"])
 def get_song_of_playlist(request, playlist_id):
+    user_id, error_response = decode_token(request)
+    if error_response:
+        return error_response
     try:
         # Lấy tất cả bài hát in playlist với playlist_id
         playlist_songs = PlaylistSong.objects.filter(playlist_id=playlist_id)
@@ -200,9 +200,9 @@ def get_song_of_playlist(request, playlist_id):
 
 @api_view(["DELETE"])
 def remove_song_from_playlist(request):
-    # user_id, error_response = decode_token(request)
-    # if error_response:
-    #     return error_response
+    user_id, error_response = decode_token(request)
+    if error_response:
+        return error_response
 
     playlist_id = request.data.get("playlist_id")
     song_id = request.data.get("song_id")
@@ -241,10 +241,11 @@ def remove_song_from_playlist(request):
 
 
 @api_view(["GET"])
-@permission_classes([AllowAny])
+# @permission_classes([AllowAny])
 def get_playlists(request):
     user_id, error_response = decode_token(request)
-    if error_response: return error_response
+    if error_response:
+        return error_response
     try:
         all_playlists = (
             Playlist.objects.all().select_related("user").order_by("-created_at")

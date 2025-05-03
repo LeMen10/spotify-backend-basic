@@ -14,7 +14,7 @@ import json
 @api_view(["GET"])
 def get_messages_general_chat(request):
     user_id, error_response = decode_token(request)
-    # user = request.user
+    if error_response: return error_response
     conversations = ConversationParticipant.objects.filter(user_id=user_id).values_list(
         "conversation_id", flat=True
     )
@@ -40,8 +40,7 @@ def get_messages_general_chat(request):
 @api_view(["GET"])
 def get_messages_gemini(request):
     user_id, error_response = decode_token(request)
-    if error_response:
-        return error_response
+    if error_response: return error_response
     user = User.objects.get(id=user_id)
 
     try:
@@ -75,8 +74,7 @@ def get_messages_gemini(request):
 @api_view(["POST"])
 def save_message_gemini(request):
     user_id, error_response = decode_token(request)
-    if error_response:
-        return error_response
+    if error_response: return error_response
     user = User.objects.get(id=user_id)
 
     try:
@@ -114,10 +112,8 @@ def save_message_gemini(request):
 
 @api_view(["POST"])
 def save_message_general(request):
-    # sender_id = request.data.get("sender_id")
-    # conversation_id = request.data.get("conversation_id")
-    # content = request.data.get("content")
-
+    user_id, error_response = decode_token(request)
+    if error_response: return error_response
     try:
         sender = request.data.get("sender_id")
         conversation_id = request.data.get('conversation_id')

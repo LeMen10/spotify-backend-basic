@@ -4,10 +4,13 @@ from rest_framework import status
 from api.models import User, Song, Message, Artist
 from datetime import datetime, timedelta
 from api.serializers import SongSerializer
+from api.utils.decode_token import decode_token
 
 
 @api_view(["GET"])
 def get_system_stats(request):
+    user_id, error_response = decode_token(request)
+    if error_response: return error_response
     try:
         stats = {
             "total_users": User.objects.count(),
@@ -24,6 +27,8 @@ def get_system_stats(request):
 
 @api_view(["GET"])
 def top_popular_songs_char(request):
+    user_id, error_response = decode_token(request)
+    if error_response: return error_response
     try:
         queryset = Song.objects.select_related("artist").filter(play_count__gt=0).all()
         top_songs = queryset.order_by("-play_count", "-release_date")[:5]
@@ -49,6 +54,9 @@ def top_popular_songs_char(request):
 
 @api_view(["GET"])
 def top_songs(request):
+    user_id, error_response = decode_token(request)
+    if error_response: return error_response
+    
     songs = Song.objects.filter(play_count__gt=0).order_by("-play_count", "-release_date")[:10]
     serializer = SongSerializer(songs, many=True, context={"request": request})
     return Response(serializer.data)

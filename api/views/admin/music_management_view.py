@@ -42,8 +42,8 @@ def get_songs_management(request):
 @permission_classes([AllowAny])
 @parser_classes([MultiPartParser, FormParser])  # Hỗ trợ upload file
 def add_song(request):
-    # user_id, error_response = decode_token(request)
-    # if error_response: return error_response
+    user_id, error_response = decode_token(request)
+    if error_response: return error_response
     try:
         title = request.data.get("title")
         duration = request.data.get("duration")
