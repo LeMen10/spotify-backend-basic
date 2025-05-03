@@ -35,9 +35,9 @@ def get_genres(request):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def add_genre(request):
+    user_id, error_response = decode_token(request)
+    if error_response: return error_response
     if request.method == "POST":
-        user_id, error_response = decode_token(request)
-        if error_response: return error_response
         try:
             data = json.loads(request.body)
             name = data.get("name")
@@ -55,9 +55,9 @@ def add_genre(request):
 @api_view(["PUT"])
 @permission_classes([AllowAny])
 def update_genre(request, id):
+    user_id, error_response = decode_token(request)
+    if error_response: return error_response
     if request.method == "PUT":
-        user_id, error_response = decode_token(request)
-        if error_response: return error_response
         try:
             genre = get_object_or_404(Genre, id=id)
             data = json.loads(request.body)
@@ -77,9 +77,9 @@ def update_genre(request, id):
 @api_view(["DELETE"])
 @permission_classes([AllowAny])
 def delete_genre(request, id):
+    user_id, error_response = decode_token(request)
+    if error_response: return error_response
     if request.method == "DELETE":
-        user_id, error_response = decode_token(request)
-        if error_response: return error_response
         try:
             genre = get_object_or_404(Genre, id=id)
             # Xóa tất cả bài hát liên quan đến thể loại

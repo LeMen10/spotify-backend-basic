@@ -8,6 +8,7 @@ from ..utils.decode_token import decode_token
 def get_conversation(request):
     user_id, error_response = decode_token(request)
     if error_response: return error_response
+    
     conversations = Conversation.objects.filter(name="General")
     serializer = ConversationSerializer(conversations, many=True)
     return Response(serializer.data)

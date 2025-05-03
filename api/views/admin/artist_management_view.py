@@ -16,7 +16,6 @@ from django.db import IntegrityError
 # artist
 # API get artists
 @api_view(["GET"])
-@permission_classes([AllowAny])
 def get_artists_by_limit(request):
     user_id, error_response = decode_token(request)
     if error_response: return error_response
@@ -30,8 +29,6 @@ def get_artists_by_limit(request):
         page_count = ceil(total_count / limit)
 
         artists = all_artists[offset : offset + limit]
-
-        # Serialize
         serializer = ArtistSerializer(artists, many=True, context={"request": request})
 
         return Response(
@@ -43,11 +40,10 @@ def get_artists_by_limit(request):
 
 
 @api_view(["POST"])
-@permission_classes([AllowAny])
 def add_artist(request):
+    user_id, error_response = decode_token(request)
+    if error_response: return error_response
     if request.method == "POST":
-        user_id, error_response = decode_token(request)
-        if error_response: return error_response
         try:
             data = json.loads(request.body)
             name = data.get("name")
@@ -65,11 +61,10 @@ def add_artist(request):
 
 
 @api_view(["PUT"])
-@permission_classes([AllowAny])
 def update_artist(request, id):
+    user_id, error_response = decode_token(request)
+    if error_response: return error_response
     if request.method == "PUT":
-        user_id, error_response = decode_token(request)
-        if error_response: return error_response
         try:
             artist = get_object_or_404(Artist, id=id)
             data = json.loads(request.body)
@@ -87,11 +82,10 @@ def update_artist(request, id):
 
 
 @api_view(["DELETE"])
-@permission_classes([AllowAny])
 def delete_artist(request, id):
+    user_id, error_response = decode_token(request)
+    if error_response: return error_response
     if request.method == "DELETE":
-        user_id, error_response = decode_token(request)
-        if error_response: return error_response
         try:
             artist = get_object_or_404(Artist, id=id)
             # Xóa tất cả bài hát liên quan đến nghệ sĩ
@@ -109,7 +103,6 @@ def delete_artist(request, id):
     return JsonResponse({"error": "Method not supported"}, status=405)
 
 @api_view(["GET"])
-@permission_classes([AllowAny])
 def get_artists(request):
     user_id, error_response = decode_token(request)
     if error_response: return error_response

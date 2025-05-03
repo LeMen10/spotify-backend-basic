@@ -54,7 +54,6 @@ def register(request):
     email = request.data.get("email")
     fullname = request.data.get("fullname")
     profile_pic = request.data.get("profile_pic")
-    print(username, password, email, fullname, profile_pic)
 
     if not username or not password or not email or not fullname or not profile_pic:
         return Response({"error": "missing data"}, status=status.HTTP_400_BAD_REQUEST)
@@ -78,6 +77,5 @@ def register(request):
         conversation=conversation,
         user=create_user
     )
-
 
     return Response({"message": "Success"}, status=status.HTTP_201_CREATED)
