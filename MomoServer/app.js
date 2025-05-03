@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Hoặc giới hạn domain cụ thể:
 app.use(cors({
-    origin: 'http://localhost:8080', // Domain của client
+    origin: 'http://localhost:3000', // Domain của client
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
 }));
@@ -21,7 +21,7 @@ app.use(cors({
 
 app.post('/payment', (req, res) => {
     // Nhận tham số từ body
-    const { amount, orderIdSuffix, bookingId } = req.body;
+    const { amount, orderIdSuffix, accountId } = req.body;
 
     if (!amount || !orderIdSuffix) {
         return res.status(400).json({ message: "Amount và orderIdSuffix là bắt buộc." });
@@ -30,7 +30,7 @@ app.post('/payment', (req, res) => {
     // Thông tin cố định
     var accessKey = 'F8BBA842ECF85';
     var secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
-    var orderInfo = 'pay with MoMo';
+    var orderInfo = 'Spotify Premium Max VIP Pro Plus Plus';
     var partnerCode = 'MOMO';
 
     
@@ -39,7 +39,7 @@ app.post('/payment', (req, res) => {
     var requestType = "payWithMethod";
     var extraData = '';
     var orderId = partnerCode + orderIdSuffix; // Sử dụng suffix từ client
-    var redirectUrl = 'http://localhost:8080/notificationSuccess-momo?bookingId=' + bookingId + '&orderId=' + orderIdSuffix;
+    var redirectUrl = 'http://localhost:3000/momo?accountId=' + accountId + '&orderId=' + orderIdSuffix;
     var requestId = orderId;
     var orderGroupId = '';
     var autoCapture = true;
@@ -222,7 +222,7 @@ app.post('/check-status-transaction', async (req, res) => {
     }
 });
 
-app.listen(3000, () => {
-    console.log('Server is running on port 3000');
+app.listen(3001, () => {
+    console.log('Server is running on port 3001');
 });
 

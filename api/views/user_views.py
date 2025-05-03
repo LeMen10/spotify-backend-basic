@@ -44,6 +44,10 @@ def get_user(request):
                 "id": user.id,
                 "username": user.username,
                 "profile_pic": str(user.profile_pic) if user.profile_pic else None,
+                "isPremium" : user.isRegister,
+                "premiumDate": user.dateRegister,
+                "MonthPremium": user.monthRegister,
+                "mail": user.email
             },
         },
         status=status.HTTP_200_OK,

@@ -22,7 +22,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=255)
     profile_pic = models.CharField(max_length=100, default="null")
     fullname = models.CharField(max_length=100, default="null")
+    dateRegister = models.DateField(null=True, blank=True)
+    monthRegister = models.IntegerField(default=2)
 
+    isRegister = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     role = models.CharField(max_length=50, default="customer")
 
