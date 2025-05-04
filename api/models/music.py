@@ -21,6 +21,7 @@ class Song(models.Model):
     play_count = models.PositiveIntegerField(default=0)
     audio_file = models.FileField(upload_to='songs/', default='default.mp3')
     image = models.ImageField(upload_to='song_images/', null=True, blank=True)
+    is_premium = models.BooleanField(default=False)
 
     class Meta:
         db_table = "songs"

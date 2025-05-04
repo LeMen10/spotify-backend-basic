@@ -1,7 +1,7 @@
 from django.urls import path
 from .views.auth_views import register, login
 from .views.user_views import get_users_test, user_profile, get_user
-from .views.premium_views import activate_premium
+from .views.premium_views import activate_premium, deactivate_premium
 from .views.message_views import (
     get_messages_general_chat,
     get_messages_gemini,
@@ -146,4 +146,5 @@ urlpatterns = [
     path("admin/songs/top/", top_songs, name="top-songs"),
     # premium
     path("premium/activate", activate_premium, name="activate-premium"),
+    path("premium/deactivate", deactivate_premium, name="deactivate-premium"),
 ]
