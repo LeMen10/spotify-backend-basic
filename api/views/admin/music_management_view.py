@@ -52,8 +52,9 @@ def add_song(request):
         genre_id = request.data.get("genre_id")
         audio_file = request.FILES.get("audio_file")
         image_file = request.FILES.get("image_file") 
-        print(title, duration, release_date, artist_id, genre_id, audio_file, image_file)
-
+        is_premium = request.data.get("is_premium")
+        is_premium = is_premium.lower() == "true"
+        
         if not all([title, duration, release_date, artist_id, genre_id, audio_file, image_file]):
             return Response({"error": "Missing fields"}, status=400)
 
@@ -65,6 +66,7 @@ def add_song(request):
             genre_id=genre_id,
             audio_file=audio_file,
             image=image_file,
+            is_premium=is_premium,
         )
 
         return Response(SongSerializer(song).data, status=201)

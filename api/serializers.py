@@ -15,6 +15,9 @@ class UserSerializer(serializers.ModelSerializer):
             "profile_pic",
             "is_active",
             "role",
+            "dateRegister",
+            "monthRegister",
+            "isRegister",
         ]
 
     def update(self, instance, validated_data):
@@ -69,7 +72,8 @@ class SongSerializer(serializers.ModelSerializer):
             "genre_info",
             "artist_id",
             "genre_id",
-            "image"
+            "image",
+            "is_premium"
         ]
 
     def get_audio_url(self, obj):
