@@ -79,12 +79,25 @@ Nếu mọi thứ đúng, bạn sẽ thấy phản hồi:
 PONG
 ```
 
-### 5. **Chạy server**
+### 5. **Chạy server backend dự án**
 
-Khi đã kích hoạt môi trường ảo thì chạy lệnh sau với Daphne để hổ trợ Websocket:
+Nếu đang ở thư mục 'spotify-backend-basic' và đã kích hoạt môi trường ảo thì 
+chạy lệnh sau với Daphne để hổ trợ Websocket:
 
 ```sh
 daphne djangoMNM.asgi:application --port 8000
+```
+### 6. **Chạy server Momo**
+
+Mở Terminal của dự án:
+
+```sh
+cd MomoServer
+```
+
+Chạy bằng lệnh:
+```sh
+Node app.js
 ```
 
 ## Thông tin bổ sung
