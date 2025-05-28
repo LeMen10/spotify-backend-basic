@@ -15,8 +15,6 @@ def login(request):
     username = request.data.get("username")
     password = request.data.get("password")
 
-    print(username, password)
-
     if not username or not password:
         return Response(
             {"error": "missing username or password"},
@@ -25,14 +23,13 @@ def login(request):
 
     try:
         user = User.objects.get(username=username)
-        print(user.__dict__)
     except User.DoesNotExist:
         return Response(
             {"error": "fail username or password"}, status=status.HTTP_401_UNAUTHORIZED
         )
 
     if check_password(password, user.password):
-        token, expires_at  = generate_jwt_token(user)
+        token, expires_at = generate_jwt_token(user)
         return Response(
             {
                 "message": "Success",
@@ -45,6 +42,7 @@ def login(request):
     return Response(
         {"error": "Invalid username or password"}, status=status.HTTP_401_UNAUTHORIZED
     )
+
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
@@ -63,10 +61,10 @@ def register(request):
             {"error": "username already exists"}, status=status.HTTP_400_BAD_REQUEST
         )
 
-    create_user = User.objects.create(
+    create_user = User.objects.create_user(
         username=username,
         email=email,
-        password=make_password(password),
+        password=password,
         fullname=fullname,
         profile_pic=profile_pic,
     )
@@ -74,8 +72,50 @@ def register(request):
     conversation, _ = Conversation.objects.get_or_create(name="General")
 
     ConversationParticipant.objects.get_or_create(
-        conversation=conversation,
-        user=create_user
+        conversation=conversation, user=create_user
     )
 
     return Response({"message": "Success"}, status=status.HTTP_201_CREATED)
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def login_admin(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+
+    if not username or not password:
+        return Response(
+            {"error": "Missing username or password"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response(
+            {"error": "Invalid username or password"},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
+
+    if not check_password(password, user.password):
+        return Response(
+            {"error": "Invalid username or password"},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
+
+    if getattr(user, "role", None) != "admin":
+        return Response(
+            {"error": "You are not authorized as admin"},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+
+    token, expires_at = generate_jwt_token(user)
+    return Response(
+        {
+            "message": "Success",
+            "access_token": token,
+            "expires_at": expires_at,
+        },
+        status=status.HTTP_200_OK,
+    )

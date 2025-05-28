@@ -13,6 +13,7 @@ class UserManager(BaseUserManager):
 
     def create_superuser(self, username, email, password=None, **extra_fields):
         extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("is_staff", True)
         return self.create_user(username, email, password, **extra_fields)
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -22,10 +23,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     profile_pic = models.CharField(max_length=100, default="null")
     fullname = models.CharField(max_length=100, default="null")
     dateRegister = models.DateField(null=True, blank=True)
-    monthRegister = models.IntegerField(default=2)
+    monthRegister = models.IntegerField(default=0)
 
     isRegister = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
     role = models.CharField(max_length=50, default="customer")
 
     USERNAME_FIELD = "email"

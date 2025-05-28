@@ -5,7 +5,6 @@ from ..models import User
 
 def decode_token(request):
     token = request.headers.get("Authorization")
-    print(f"Received Token: {token}")
     if not token:
         return None, JsonResponse({"error": "No token"}, status=401)
 
@@ -15,7 +14,6 @@ def decode_token(request):
 
         decoded_payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         user_id = decoded_payload.get("id")
-        print(user_id)
 
         if not User.objects.filter(id=user_id).exists():
             return None, JsonResponse({"error": "User not found"}, status=401)

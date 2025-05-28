@@ -1,5 +1,5 @@
 from django.urls import path
-from .views.auth_views import register, login
+from .views.auth_views import register, login, login_admin
 from .views.user_views import get_users_test, user_profile, get_user
 from .views.premium_views import activate_premium, deactivate_premium
 from .views.message_views import (
@@ -57,6 +57,7 @@ from .views.admin.dashboard_management_view import (
 urlpatterns = [
     # auth
     path("auth/login", login, name="user-login"),
+    path("admin/auth/login", login_admin, name="admin-login"),
     path("auth/register", register, name="user-register"),
     # users
     path("user/get-users", get_users_test, name="user-list"),
