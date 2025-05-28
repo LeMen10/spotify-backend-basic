@@ -10,7 +10,8 @@ from api.utils.decode_token import decode_token
 def activate_premium(request):
     if request.method == "POST":
         user_id, error_response = decode_token(request)
-        if error_response: return error_response
+        if error_response:
+            return error_response
         try:
             data = json.loads(request.body)
             user_id = data.get("user_id")
@@ -19,7 +20,12 @@ def activate_premium(request):
 
             # Set premium information
             user.dateRegister = timezone.now().date()
-            user.monthRegister = 1
+            if user.monthRegister == 0:
+                # Chưa từng đăng ký premium
+                user.monthRegister = 2
+            elif not user.isRegister:
+                # Từng đăng ký rồi nhưng hiện tại đã hết hạn → reset lại 1 tháng
+                user.monthRegister = 1
             user.isRegister = True
             user.save()
 
@@ -43,11 +49,11 @@ def activate_premium(request):
 def deactivate_premium(request):
     if request.method == "POST":
         user_id, error_response = decode_token(request)
-        if error_response: return error_response
+        if error_response:
+            return error_response
         try:
             data = json.loads(request.body)
             user_id = data.get("user_id")
-            print(user_id)
 
             user = User.objects.get(id=user_id)
 

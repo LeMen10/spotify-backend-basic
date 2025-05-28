@@ -61,7 +61,7 @@ def get_messages_gemini(request):
         {
             "id": msg.id,
             "sender_id": msg.sender.id,
-            "fullname": msg.sender.fullname,
+            "username": msg.sender.username,
             "profile_pic": msg.sender.profile_pic,
             "content": msg.content,
             "timestamp": msg.timestamp,

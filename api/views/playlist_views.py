@@ -21,7 +21,7 @@ def get_playlist_by_limit(request):
 
         offset = (page - 1) * limit
         all_playlists = (
-            Playlist.objects.all().select_related("user").order_by("-created_at")
+            Playlist.objects.filter(user_id=user_id).select_related("user").order_by("-created_at")
         )
         total_count = all_playlists.count()
         page_count = ceil(total_count / limit)
